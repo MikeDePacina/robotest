@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import CardList from "./Components/CardList";
+import Scroll from "./Components/Scroll";
+import SearchBox from "./Components/SearchBox";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      members: [],
+      searchField: "",
+    };
+  }
+
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((users) => this.setState({ members: users }));
+  }
+
+  onSearch = (e) => {
+    this.setState({ searchField: e.target.value });
+  };
+
+  render() {
+    const filteredMembers = this.state.members.filter((member) => {
+      return member.name
+        .toLowerCase()
+        .includes(this.state.searchField.toLowerCase());
+    });
+    return (
+      <div className="text-center m-2">
+        <h1 className="text-6xl m-4"> Loona</h1>
+        <SearchBox searchChange={this.onSearch} />
+        <Scroll>
+          <CardList members={filteredMembers} />
+        </Scroll>
+      </div>
+    );
+  }
 }
 
 export default App;
